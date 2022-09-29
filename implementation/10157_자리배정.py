@@ -6,16 +6,33 @@ max_k = R * C
 if k > max_k:
     print(0)
 else:
-    seats = [[0] * C for _ in range(R)]
-    dir = ((0, 1), (1, 0), (0, -1), (-1, 0))
-    d = 0
-    r, c = 0, 0
-    for i in range(1, k):
-        seats[r][c] = i
-        nr, nc = r + dir[d][0], c + dir[d][1]
-        if 0 <= nr < R and 0 <= nc < C and seats[nr][nc] == 0:
-            r, c = nr, nc
-        else:
-            d = (d + 1) % len(dir)
-            r, c = r + dir[d][0], c + dir[d][1]
-    print(r+1, c+1)
+    m = min(R, C)
+    start = 1
+    for d in range((m // 2) + (m % 2)):
+        d2 = d + d
+        r = R - d2
+        c = C - d2
+        end = start + (r + c) * 2 - 4
+        # print(start, end)
+        if k < end:
+            bound = start + c - 1
+            diff = k - start
+            if k < bound:
+                print(d + 1, d + 1 + diff)
+                break
+            bound += r - 1
+            diff -= c - 1
+            if k < bound:
+                print(d + 1 + diff, C - d)
+                break
+            bound += c - 1
+            diff -= r - 1
+            if k < bound:
+                print(R - d, C - d - diff)
+                break
+            bound += r - 1
+            diff -= c - 1
+            if k < bound:
+                print(R - d - diff, d + 1)
+                break
+        start = end
