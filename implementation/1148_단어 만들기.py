@@ -1,8 +1,10 @@
 # https://www.acmicpc.net/problem/1148
 import sys
 
+N = ord('Z') - ord('A') + 1
+
 def count_alpha(word):
-    cnt = [0] * (ord('Z') - ord('A') + 1)
+    cnt = [0] * N
     for ch in word:
         cnt[ord(ch)-ord('A')] += 1
     return cnt
@@ -20,33 +22,26 @@ while True:
         break
     p_cnt = count_alpha(puzzle)
     
-    alpha_cnt = [0] * (ord('Z') - ord('A') + 1)
+    word_cnt = [0] * N # word_cnt[i]: i번 째 알파벳을 포함하고 있는 단어의 개수
+    
     for w_cnt in words:
         include = True
-        for p, w in zip(p_cnt, w_cnt):
+        for p, w in zip(p_cnt, w_cnt): # 퍼즐의 알파벳으로 만들 수 있는 단어인지 확인
             if p < w:
                 include = False
                 break
-        if include:
-            for i in range(len(alpha_cnt)):
+        if include: # 만들 수 있는 단어일 경우 word_cnt 업데이트
+            for i in range(len(word_cnt)):
                 if w_cnt[i] > 0:
-                    alpha_cnt[i] += 1
+                    word_cnt[i] += 1
     
-    not_exist = [ch for ch in puzzle if alpha_cnt[ord(ch)-ord('A')] == 0]
+    exist_alpha = [False] * N
+    for ch in puzzle:
+        exist_alpha[ord(ch)-ord('A')] = True
     
-    if len(not_exist) == 9:
-        not_exist = sorted(list(set(not_exist)))
-        print("".join(not_exist), 0, "".join(not_exist), 0)
-    else:
-        if len(not_exist) > 0:
-            not_exist = sorted(list(set(not_exist)))
-            print("".join(not_exist), 0, end=" ")
-            ma = max(alpha_cnt)
-        else:
-            sort = sorted(set(alpha_cnt))
-            mi, ma = sort[1], sort[-1]
-            mi_list = [i for i in range(len(alpha_cnt)) if mi == alpha_cnt[i]]
-            print("".join(map(lambda x: chr(ord('A')+x), mi_list)), mi, end=" ")
-        
-        ma_list = [i for i in range(len(alpha_cnt)) if ma == alpha_cnt[i]]
-        print("".join(map(lambda x: chr(ord('A')+x), ma_list)), ma)
+    cnt_for_puzzle = [word_cnt[i] for i in range(N) if exist_alpha[i]]
+    m = min(cnt_for_puzzle)
+    M = max(cnt_for_puzzle)
+    min_alpha = [chr(i + ord('A')) for i in range(N) if exist_alpha[i] and word_cnt[i] == m]
+    max_alpha = [chr(i + ord('A')) for i in range(N) if exist_alpha[i] and word_cnt[i] == M]
+    print("".join(min_alpha), m, "".join(max_alpha), M)
