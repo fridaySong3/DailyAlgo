@@ -8,15 +8,12 @@ def solution(genres, plays):
         info[g][0] += plays[i]
         info[g][1].append((plays[i], i)) 
         
-    for g in info:
-        info[g][1].sort(key=lambda x:(-x[0], x[1])) # add '-' for sorting descending order
-        
-    gOrder = sorted(info.values(), key=lambda x:x[0], reverse=True)
+    gOrder = sorted(info.keys(), key=lambda g:info[g][0], reverse=True)
     # print(gOrder)
     
     answer = []
-    for _ , sortedSongs in gOrder:
-        for i in range(min(2, len(sortedSongs))):
-            answer.append(sortedSongs[i][1])
+    for g in gOrder:
+        sortedSongsIdx = [song[1] for song in sorted(info[g][1], key=lambda x:(-x[0], x[1]))] # add '-' for sorting descending order
+        answer += sortedSongsIdx[:min(2, len(sortedSongsIdx))]
         
     return answer
